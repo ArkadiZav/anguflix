@@ -1,13 +1,262 @@
+<!-- TODO: ##### Separate my movie collection from store collection
+           ##### When Reset button is pressed: reset also list of movies
+           ##### Greater description when a movie is hovered
+           ##### IMDB API
+           ##### CSS Correct image visualization
+-->
+
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" type = "text/css">
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="style.css">
     <title> anguFlix- like netflix... But better </title>
   </head>
-  <body>
+
+  <body ng-app = "anguflixApp" ng-controller = "anguflixCtrl">
+
+    <!-- Trigger the modal with a button -->
+    <button ng-click = "noWarn()" ng-show="showModal.val" type="button" class="btn btn-danger btn-lg error-no-money" data-toggle="modal" data-target="#myModal">No money! <br /> Click to resolve</button>
+
+    <!-- Modal -->
+    <div  class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+
+    <div >
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;
+            <i class="icon-warning-sign"></i></button>
+            <h4 class="modal-title">Out of money</h4>
+          </div>
+          <div class="modal-body">
+            <p class ="warn-message">Please add MONEY to your budget or choose another movie <br /> that you CAN afford... </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+
+
+
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" >
+       <div class="container-fluid">
+           <!-- Brand and toggle get grouped for better mobile display -->
+           <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                       data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                   <span class="sr-only">Toggle navigation</span>
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+               </button>
+               <a class="navbar-brand" href="#">ANGUFLIX</a>
+           </div>
+
+           <!-- Collect the nav links, forms, and other content for toggling -->
+           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+               <ul class="nav navbar-nav navbar-right">
+                   <li class="dropdown">
+                     <a href="#" ng-click ="showProfile()" class= "user-profile" data-toggle="dropdown" role="button">My Profile <i
+                       class = "fa fa-user-circle-o" aria-hidden="true"></i></a>
+                   </li>
+                   <li class="dropdown">
+                     <a href="#" ng-click ="showAdmin()" class= "admin" data-toggle="dropdown" role="button">Admin <i
+                       class = "fa fa-user-o" aria-hidden="true"></i></a>
+                    </li>
+               </ul>
+           </div><!-- /.navbar-collapse -->
+       </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class ="user-circle-o" ng-show = "!isUserProfileClicked.content" ng-controller = "anguflixCtrl">
+      <div class="row">
+        <div class="col-md-12">
+           <div class="page-header">
+              <h2>My Movies:</h2>
+
+           </div>
+           <div class = "row">
+             <div class="col-md-6">
+               <h4>Budget: {{budget.current | currency}}</h4>
+             </div>
+             <div class = "col-md-6">
+               <div class="input-group">
+                  <input type="number" min="1" class="form-control" ng-model="moneyToAdd">
+                  <span class="input-group-btn">
+                       <button class="btn btn-success" type="button" ng-click = "addToBudget(moneyToAdd)">Add Money</button>
+                  </span>
+               </div>
+
+             </div>
+           </div>
+           <div>
+              &nbsp;
+           </div>
+           <h4 class = "purchase-header">Movies I want to purchase: </h4>
+             <ul class = "profile-movies" ng-repeat = "movie in myMovieCollection track by $index">
+               <li class = "purchased-movies">
+                 {{movie.name}} <span class = "profile-price"> {{movie.price | currency}} </span>
+               </li>
+             </ul>
+             <div>
+               <button class="reset-collection btn btn-danger" type="button" ng-click = "resetMyProfile()">Reset</button>
+             </div>
+           </div>
+          </div>
+          <div>
+            &nbsp;
+          </div>
+
+          <div class = "row admin-inner" ng-show = "!isAdminClicked.content">
+            <div class = "col-md-6 col-md-offset-3">
+              <h2 class = "admin-title"> Admin </h2>
+              <hr />
+            </div>
+            <div class = "col-md-8 col-md-offset-3">
+
+              <div class ="user-o" ng-controller = "anguflixCtrl">
+                <div class="input-group">
+                  <input type="text" class="form-control" ng-model="movieName">
+                   <span class="input-group-btn">
+                     <button class="btn btn-primary" type="button" ng-click = "fetch(movieName)">Add Movie</button>
+                   </span>
+                 </div>
+               </div>
+             </div>
+         </div>
+
+
+        </div>
+
+    <div id="myCollectionContainer" ng-controller = "anguflixCtrl">
+
+      <div class="row">
+        <div class="col-md-3 col-md-offset-3">
+          <div class = "header jumbotron">
+            <h2>My Movie Collection</h2>
+            <div class="form-group">
+              <span class="col-md-7">
+                <input class="form-control" type="text" ng-model="title" placeholder="Search by title">
+              </span>
+
+                <span class="col-md-4">
+                  <select class="form-control" ng-model="movieYear">
+                    <option value="">Any Year</option>
+                    <option value="1994">1994</option>
+                    <option value="1995">1995</option>
+                    <option value="1996">1996</option>
+                    <option value="1997">1997</option>
+                    <option value="1998">1998</option>
+                    <option value="1999">1999</option>
+                    <option value="2000">2000</option>
+                    <option value="2001">2001</option>
+                    <option value="2002">2002</option>
+                    <option value="2003">2003</option>
+                    <option value="2004">2004</option>
+                    <option value="2005">2005</option>
+                    <option value="2006">2006</option>
+                    <option value="2007">2007</option>
+                    <option value="2008">2008</option>
+                    <option value="2009">2009</option>
+                    <option value="2010">2010</option>
+                    <option value="2011">2011</option>
+
+                  </select>
+                </span>
+                <span>
+                  <i class="fa fa-trash-o fa-2x" aria-hidden="true" ng-show = "!isTrashClicked.content" ng-click="showRemoveOption()"></i>
+                  <i class="fa fa-check-circle fa-2x" aria-hidden="true" ng-show = "isTrashClicked.content" ng-click="showRemoveOption()"></i>
+                </span>
+
+      			</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-md-offset-2" id = "empty-container">
+          <div ng-hide = "myMovieCollection.length != 0">
+
+            <h3> Select movies from below to add to your collection </h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class ="col-md-9 movies">
+
+          <!-- The movies will be added here -->
+          <ul rn-carousel class = "movie" active = "active">
+            <li class = "card-inner col-md-4 ng-scope" ng-repeat="movie in myMovieCollection | filter: {name: title, year: movieYear} track by $index">
+              <p class = "price">
+                 {{movie.price | currency}} <span class= "movie-info"> {{movie.name}}, {{movie.year}} </span>
+              </p>
+              <a href="#" class="thumb"><img class = "movie-image" ng-click="addMovie(movie)" ng-src="{{movie.imageUrl}}"></a>
+              <div ng-show = "isTrashClicked.content" class = "removeButton">
+                <a class = "remove-button" href="#" ng-click="removeMovie($index)">Remove</a>
+              </div>
+              <div class = "description">
+                <h5> {{movie.description}} </h5>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class ="col-md-9 hr">
+          <hr class ="style-4">
+        </div>
+      </div>
+
+    </div>
+
+
+     <div class = "container-fluid" id="myMoviesContainer" ng-controller = "anguflixCtrl">
+      <div class="row">
+        <div class="col-md-9">
+
+          <ul>
+            <div ng-hide = "movieCollection.length != 0">
+              <h3> select movies from below to add to your collection </h3>
+            </div>
+            <div ng-show = "movieCollection.length != 0">
+              <div class = "card-container">
+                <div class = "card">
+                  <li class = "card-inner col-md-4" ng-repeat="movie in movieCollection track by $index" ng-click="addMovie(movie)">
+                    <p class = "price">
+                       {{movie.price | currency}} <span class ="movie-info"> {{movie.name}}, {{movie.year}} </span>
+                    </p>
+                    <a href="#" class="thumb"><img class = "movie-image" ng-src="{{movie.imageUrl}}"></a>
+                    <div class = "description">
+                      <h5> {{movie.description}} </h5>
+                    </div>
+                  </li>
+                </div>
+              </div>
+            </div>
+          </ul>
+        </div>
+      </div>
+    </div>
 
   </body>
+
   <script src="node_modules/angular/angular.js"></script>
+  <script src="https://rawgit.com/dwmkerr/angular-modal-service/master/dst/angular-modal-service.js"></script>
   <script src="node_modules/ngstorage/ngStorage.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="app.js"></script>
+  <script src="service.js"></script>
+  <script src="controller.js"></script>
+
 </html>

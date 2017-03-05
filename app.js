@@ -1,1 +1,1 @@
-var app = angular.module("anguflixApp", []);
+var app = angular.module("anguflixApp", ['angularModalService', "ngStorage"]);

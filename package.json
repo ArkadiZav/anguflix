@@ -1,0 +1,27 @@
+{
+  "name": "anguflix",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArkadiZav/anguflix.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArkadiZav/anguflix/issues"
+  },
+  "homepage": "https://github.com/ArkadiZav/anguflix#readme",
+  "dependencies": {
+    "angular": "^1.6.2",
+    "angular-bootstrap": "^0.12.2",
+    "bootstrap": "^3.3.7",
+    "font-awesome": "^4.7.0",
+    "ng-storage": "^0.3.2",
+    "ui-bootstrap": "^0.1.10"
+  }
+}
