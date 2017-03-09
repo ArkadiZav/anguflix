@@ -17,7 +17,6 @@ app.controller('anguflixCtrl', ['$scope','anguflixService', function($scope, ang
   $scope.addToBudget = anguflixService.addToBudget;
   $scope.resetMyProfile = anguflixService.resetMyProfile;
   $scope.showAdmin = anguflixService.showAdmin;
-  $scope.showModal = anguflixService.showModal;
   $scope.noWarn = anguflixService.noWarn;
   // ########## HTTP IMDB ############## ///
   $scope.fetch = anguflixService.fetch;

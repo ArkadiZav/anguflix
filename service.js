@@ -6,7 +6,6 @@ app.factory('anguflixService', function($localStorage, $http) {
   var isTrashClicked = {content: false};
   var isUserProfileClicked = {content: false};
   var isAdminClicked = {content: false};
-  var showModal = {val: false};
 
   var saved = localStorage.getItem('myMovies'); // save my movie collection
   var saved2 = localStorage.getItem('budget'); // save budget
@@ -42,10 +41,9 @@ app.factory('anguflixService', function($localStorage, $http) {
     });
     if (!sameMovie) {
       if (budget.current < movie.price) {
-        showModal.val = true;
+        $("#myModal").modal();
       }
       else {
-        showModal.val = false;
         budget.current -= movie.price;
         myMovies.push(movie);
         localStorage.setItem('budget', JSON.stringify(budget));
@@ -113,16 +111,17 @@ app.factory('anguflixService', function($localStorage, $http) {
   fetch = function(movieName) {
     $http.get("https://www.omdbapi.com/?t=" + movieName)
       .then(function(response) {
-        var title = response.data.Title;
-        var year = response.data.Year;
-        var description = response.data.Plot;
-        var image = response.data.Poster;
-        var price = Math.floor(Math.random() * 10) + 1  // random price between 1 - 10 : because no price is in the API
-        var movie = {name: title, price: price, year: year, description: description, imageUrl: image};
-        movies.push(movie);
-        localStorage.setItem('movies', JSON.stringify(movies));
-      });
-  }
+          var title = response.data.Title;
+          var year = response.data.Year;
+          var description = response.data.Plot;
+          var image = response.data.Poster;
+          var price = Math.floor(Math.random() * 10) + 1  // random price between 1 - 10 : because no price is in the API
+          var movie = {name: title, price: price, year: year, description: description, imageUrl: image};
+          movies.push(movie);
+          localStorage.setItem('movies', JSON.stringify(movies));
+      }, function errorCallback(response) {
+          console.log(response.data);
+        })};
 
   return {
     movieCollection: movies,
@@ -140,6 +139,5 @@ app.factory('anguflixService', function($localStorage, $http) {
     showAdmin: showAdmin,
     noWarn: noWarn,
     fetch: fetch,
-    showModal: showModal
   };
 });
